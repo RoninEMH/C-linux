@@ -50,7 +50,7 @@ void encryptFile(char *fileName)
     int retVal;
     char *encryptText;
     char *newFileName;
-    while (feof(fd))
+    while (!feof(fd))
     {
         retVal = fread(buffer, sizeof(char), 1, fd);
         if (retVal == 0)
@@ -71,10 +71,46 @@ void encryptFile(char *fileName)
     strcat(newFileName, fileName);
     otherfd = fopen(newFileName, "w");
     fwrite(encryptText, sizeof(char), strlen(encryptText), otherfd);
-    
+
     close(otherfd);
+    //remove(fileName);
     free(newFileName);
     free(encryptText);
+}
+
+void dencryptFile(char *fileName)
+{
+    FILE *fd = fopen(fileName, "r");
+    FILE *otherfd;
+    int len = strlen(fileName);
+    int otherlen = strlen("Encrypted");
+    char *originalFileName = (char *)malloc((len - otherlen) * sizeof(char));
+    int i;
+    char *buffer = (char *)malloc(100 * sizeof(char));
+    int retVal;
+    char *dencryptText;
+
+    for (i = 0; i < len; i++)
+        originalFileName[i] = fileName[i + otherlen];
+
+    while (!feof(fd))
+    {
+        retVal = fread(fileName, sizeof(char), 1, fd);
+        if (retVal == 0)
+        {
+            perror("error in reading file");
+            exit(1);
+        }
+    }
+
+    dencryptText = dencrypt(buffer);
+    close(fd);
+    otherfd = fopen(originalFileName, "w");
+    fwrite(dencryptText, sizeof(char), strlen(dencryptText), otherfd);
+
+    close(otherfd);
+    free(originalFileName);
+    free(dencryptText);
 }
 
 int main(int argc, char *args[])

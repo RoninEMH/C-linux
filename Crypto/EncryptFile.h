@@ -10,5 +10,5 @@ static unsigned key;
 void setKey();
 char *encrypt(char *str);
 char *dencrypt(char *str);
-void encryptFile(char *filename);
-void dencryptFile(char *filename);
+void encryptFile(char *fileName);
+void dencryptFile(char *fileName);
