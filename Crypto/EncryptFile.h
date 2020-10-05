@@ -5,10 +5,8 @@
 #include <dirent.h>
 
 #define LEN 26
-static unsigned key;
+extern unsigned key;
 
 void setKey();
 char *encrypt(char *str);
-char *dencrypt(char *str);
 void encryptFile(char *fileName);
-void dencryptFile(char *fileName);
