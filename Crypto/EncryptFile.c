@@ -13,9 +13,9 @@ char *encrypt(char *str)
     setKey();
     for (i = 0; i < len; i++)
     {
-        if (str[i] > 'a' || str[i] < 'z')
+        if (str[i] < 'a' || str[i] > 'z')
             temp[i] = str[i];
-        if (str[i] + key > 'z')
+        else if (str[i] + key > 'z')
         {
             int r = str[i] + key - 1;
             temp[i] = 'a' + r - 'z';
@@ -41,18 +41,13 @@ void encryptFile(char *fileName)
     {
         retVal = fread(buffer, sizeof(char), 1, fd);
         if (retVal == 0)
-        {
-            //printf("\nmessage = %s\n", text);
             break;
-        }
         text[index] = *buffer;
         index++;
     }
     text = (char *)realloc(text, index * sizeof(char));
     encryptText = (char *)malloc(strlen(text) * sizeof(char));
     encryptText = encrypt(text);
-    //printf("\nkey = %d\n", key);
-    //printf("\n encrypt = %s\n", encryptText);
     fclose(fd);
 
     newFileName = (char *)malloc((strlen("Encrypted") + strlen(fileName)) * sizeof(char));

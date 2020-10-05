@@ -1,17 +1,36 @@
 #include "DecryptFile.h"
 
-char *decrypt(char *str)
+int power(int x, int y)
 {
-    //setKey();
-    //key is 0
+    int i;
+    int result = 1;
+    for (i = 0; i < y; i++)
+        result *= x;
+    return result;
+}
+
+int convert(char *str)
+{
     int len = strlen(str);
+    int i;
+    int num = 0;
+    for (i = len; i > 0; i--)
+        num += (int)(str[i - 1] - '0') * power(10, len - i);
+    return num;
+}
+
+char *decrypt(char *str, unsigned key)
+{
+    //key must be put in
+    int len = strlen(str);
+    printf("len = %d\n", len);
     char *temp = (char *)malloc(sizeof(char) * len);
     int i;
     for (i = 0; i < len; i++)
     {
         if (str[i] < 'a' || str[i] > 'z')
-            str[i] = temp[i];
-        if (str[i] - key < 'a')
+            temp[i] = str[i];
+        else if (str[i] - key < 'a')
         {
             int r = str[i] - 'a' - key + 1;
             temp[i] = 'z' + r;
@@ -22,7 +41,7 @@ char *decrypt(char *str)
     return temp;
 }
 
-void decryptFile(char *fileName)
+void decryptFile(char *fileName, unsigned key)
 {
     FILE *fd = fopen(fileName, "r");
     FILE *otherfd;
@@ -52,9 +71,10 @@ void decryptFile(char *fileName)
     }
     text = (char *)realloc(text, index * sizeof(char));
     dencryptText = (char *)malloc(strlen(text) * sizeof(char));
-    printf("key = %d\n", key);
-    dencryptText = decrypt(text);
+   
+    dencryptText = decrypt(text, key);
     fclose(fd);
+    
     otherfd = fopen(originalFileName, "w");
     fwrite(dencryptText, sizeof(char), strlen(dencryptText), otherfd);
 
@@ -66,6 +86,7 @@ void decryptFile(char *fileName)
 int main(int argc, char *args[])
 {
     char *fileName = args[1];
-    decryptFile(fileName);
+    unsigned key = (unsigned)convert(args[2]);
+    decryptFile(fileName, key);
     return 0;
 }
