@@ -1,4 +1,4 @@
 #include "EncryptFile.h"
 
-char *dencrypt(char *str);
-void dencryptFile(char *fileName);
+char *decrypt(char *str);
+void decryptFile(char *fileName);

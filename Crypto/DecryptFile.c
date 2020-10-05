@@ -1,12 +1,16 @@
 #include "DecryptFile.h"
 
-char *dencrypt(char *str)
+char *decrypt(char *str)
 {
+    //setKey();
+    //key is 0
     int len = strlen(str);
     char *temp = (char *)malloc(sizeof(char) * len);
     int i;
     for (i = 0; i < len; i++)
     {
+        if (str[i] < 'a' || str[i] > 'z')
+            str[i] = temp[i];
         if (str[i] - key < 'a')
         {
             int r = str[i] - 'a' - key + 1;
@@ -18,7 +22,7 @@ char *dencrypt(char *str)
     return temp;
 }
 
-void dencryptFile(char *fileName)
+void decryptFile(char *fileName)
 {
     FILE *fd = fopen(fileName, "r");
     FILE *otherfd;
@@ -26,35 +30,42 @@ void dencryptFile(char *fileName)
     int otherlen = strlen("Encrypted");
     char *originalFileName = (char *)malloc((len - otherlen) * sizeof(char));
     int i;
-    char *buffer = (char *)malloc(100 * sizeof(char));
+    char *buffer = (char *)malloc(1 * sizeof(char));
     int retVal;
     char *dencryptText;
+    char *text = (char *)malloc(100 * sizeof(char));
+    int index = 0;
 
-    for (i = 0; i < len; i++)
+    for (i = 0; i < len - otherlen + 1; i++)
         originalFileName[i] = fileName[i + otherlen];
 
     while (!feof(fd))
     {
-        retVal = fread(fileName, sizeof(char), 1, fd);
+        retVal = fread(buffer, sizeof(char), 1, fd);
         if (retVal == 0)
         {
-            perror("error in reading file");
-            exit(1);
+            printf("\nmessage = %s\n", text);
+            break;
         }
+        text[index] = *buffer;
+        index++;
     }
-
-    dencryptText = dencrypt(buffer);
-    close(fd);
+    text = (char *)realloc(text, index * sizeof(char));
+    dencryptText = (char *)malloc(strlen(text) * sizeof(char));
+    printf("key = %d\n", key);
+    dencryptText = decrypt(text);
+    fclose(fd);
     otherfd = fopen(originalFileName, "w");
     fwrite(dencryptText, sizeof(char), strlen(dencryptText), otherfd);
 
-    close(otherfd);
+    fclose(otherfd);
     free(originalFileName);
     free(dencryptText);
 }
 
-int main(int argc, char* args[])
+int main(int argc, char *args[])
 {
     char *fileName = args[1];
-    dencryptFile(fileName);
+    decryptFile(fileName);
+    return 0;
 }

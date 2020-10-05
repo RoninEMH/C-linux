@@ -5,7 +5,7 @@
 #include <dirent.h>
 
 #define LEN 26
-extern unsigned key;
+static unsigned key;
 
 void setKey();
 char *encrypt(char *str);
