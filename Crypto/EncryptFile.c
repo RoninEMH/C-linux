@@ -56,8 +56,8 @@ void encryptFile(char *fileName)
         perror("memory error");
         exit(2);
     }
-    strcpy(newFileName, "Encrypted");
-    strcat(newFileName, fileName);
+    strcpy(newFileName, fileName);
+    strcat(newFileName, "Encrypted");
     otherfd = fopen(newFileName, "w");
     fwrite(encryptText, sizeof(char), strlen(encryptText), otherfd);
 
