@@ -52,7 +52,7 @@ void decryptFile(char *fileName, unsigned key)
     char *buffer = (char *)malloc(1 * sizeof(char));
     int retVal;
     char *dencryptText;
-    char *text = (char *)malloc(100 * sizeof(char));
+    char *text = (char *)malloc(FILE_SIZE * sizeof(char));
     int index = 0;
 
     for (i = 0; i < len - otherlen + 1; i++)

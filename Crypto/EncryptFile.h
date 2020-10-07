@@ -5,6 +5,8 @@
 #include <dirent.h>
 
 #define LEN 26
+#define FILE_SIZE 200 
+
 static unsigned key;
 
 void setKey();
