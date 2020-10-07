@@ -43,20 +43,18 @@ char *decrypt(char *str, unsigned key)
 
 void decryptFile(char *fileName, unsigned key)
 {
+    int i;
     FILE *fd = fopen(fileName, "r");
     FILE *otherfd;
     int len = strlen(fileName);
-    int otherlen = strlen("Encrypted");
-    char *originalFileName = (char *)malloc((len - otherlen) * sizeof(char));
-    int i;
     char *buffer = (char *)malloc(1 * sizeof(char));
     int retVal;
     char *dencryptText;
     char *text = (char *)malloc(FILE_SIZE * sizeof(char));
     int index = 0;
-
-    for (i = 0; i < len - otherlen + 1; i++)
-        originalFileName[i] = fileName[i + otherlen];
+    char *newFileName;
+    int size = 0;
+    char* finish;
 
     while (!feof(fd))
     {
@@ -71,15 +69,34 @@ void decryptFile(char *fileName, unsigned key)
     }
     text = (char *)realloc(text, index * sizeof(char));
     dencryptText = (char *)malloc(strlen(text) * sizeof(char));
-   
+
     dencryptText = decrypt(text, key);
     fclose(fd);
-    
-    otherfd = fopen(originalFileName, "w");
+
+     for (i = 0; i < len; i++)
+    {
+        if (fileName[i] == '.')
+        {
+            size = len - i;
+            index = i;
+            break;
+        }
+    }
+    finish = (char *)malloc((size + 1) * sizeof(char));
+    newFileName = (char *)malloc((strlen("Decrypted") + len) * sizeof(char));
+    strncpy(newFileName, fileName, len - size);
+    strcat(newFileName, "Decrypted"); 
+    memcpy(finish, &fileName[index], size); 
+    finish[size] = '\0';  
+    strcat(newFileName, finish);
+
+    otherfd = fopen(newFileName, "w");
     fwrite(dencryptText, sizeof(char), strlen(dencryptText), otherfd);
 
     fclose(otherfd);
-    free(originalFileName);
+    free(newFileName);
+    free(dencryptText);
+    free(text);
     free(dencryptText);
 }
 

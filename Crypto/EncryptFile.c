@@ -36,8 +36,10 @@ void encryptFile(char *fileName)
     int retVal;
     char *encryptText;
     char *newFileName;
+    char *finish;
     char *text = (char *)calloc(FILE_SIZE, sizeof(char));
     int size = 0;
+    int len = strlen(fileName);
 
     while (!feof(fd))
     {
@@ -53,25 +55,28 @@ void encryptFile(char *fileName)
     encryptText = encrypt(text);
     fclose(fd);
 
-    for (i = 0; i < strlen(fileName); i++)
+    for (i = 0; i < len; i++)
     {
         if (fileName[i] == '.')
         {
-            size = strlen(fileName) - i;
+            size = len - i;
+            index = i;
             break;
         }
     }
-
-    newFileName = (char *)malloc((strlen("Encrypted") + strlen(fileName)) * sizeof(char));
-    strncpy(newFileName, fileName, strlen(fileName) - size);
+    finish = (char *)malloc((size + 1) * sizeof(char));
+    newFileName = (char *)malloc((strlen("Encrypted") + len) * sizeof(char));
+    strncpy(newFileName, fileName, len - size);
     strcat(newFileName, "Encrypted");
-    strcat(newFileName, ".txt");
-
+    memcpy(finish, &fileName[index], size);
+    finish[size] = '\0';
+    strcat(newFileName, finish);
+    printf("%s \n", newFileName);
     otherfd = fopen(newFileName, "w");
     fwrite(encryptText, sizeof(char), strlen(encryptText), otherfd);
 
     fclose(otherfd);
-    //remove(fileName);
+    free(finish);
     free(buffer);
     free(text);
     free(newFileName);
