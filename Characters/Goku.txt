@@ -1,0 +1,10 @@
+Goku
+
+Race: Saiyan
+
+Description: Hero that always protects his friends.
+
+
+Abilties: ssj,ssj2,ssj3,ssg,ssgss,ssgssk,ui.
+
+Gather all the 7 Dragon Balls.

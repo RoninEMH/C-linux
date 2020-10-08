@@ -23,7 +23,6 @@ char *decrypt(char *str, unsigned key)
 {
     //key must be put in
     int len = strlen(str);
-    printf("len = %d\n", len);
     char *temp = (char *)malloc(sizeof(char) * len);
     int i;
     for (i = 0; i < len; i++)
@@ -34,6 +33,21 @@ char *decrypt(char *str, unsigned key)
         {
             int r = str[i] - 'a' - key + 1;
             temp[i] = 'z' + r;
+        }
+        else
+            temp[i] = str[i] - key;
+    }
+
+    for (i = 0; i < len; i++)
+    {
+        if (temp[i] >= 'a' && temp[i] <= 'z')
+            continue;
+        if (str[i] < 'A' || str[i] > 'Z')
+            temp[i] = str[i];
+        else if (str[i] - key < 'A')
+        {
+            int r = str[i] - 'A' - key + 1;
+            temp[i] = 'Z' + r;
         }
         else
             temp[i] = str[i] - key;
@@ -54,7 +68,7 @@ void decryptFile(char *fileName, unsigned key)
     int index = 0;
     char *newFileName;
     int size = 0;
-    char* finish;
+    char *finish;
 
     while (!feof(fd))
     {
@@ -73,9 +87,9 @@ void decryptFile(char *fileName, unsigned key)
     dencryptText = decrypt(text, key);
     fclose(fd);
 
-     for (i = 0; i < len; i++)
+    for (i = 0; i < len; i++)
     {
-        if (fileName[i] == '.')
+        if (fileName[i] == '.' && (fileName[i + 1] != '/' && fileName[i + 1] != '.'))
         {
             size = len - i;
             index = i;
@@ -84,10 +98,11 @@ void decryptFile(char *fileName, unsigned key)
     }
     finish = (char *)malloc((size + 1) * sizeof(char));
     newFileName = (char *)malloc((strlen("Decrypted") + len) * sizeof(char));
+
     strncpy(newFileName, fileName, len - size);
-    strcat(newFileName, "Decrypted"); 
-    memcpy(finish, &fileName[index], size); 
-    finish[size] = '\0';  
+    strcat(newFileName, "Decrypted");
+    memcpy(finish, &fileName[index], size);
+    finish[size] = '\0';
     strcat(newFileName, finish);
 
     otherfd = fopen(newFileName, "w");

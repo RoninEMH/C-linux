@@ -23,6 +23,22 @@ char *encrypt(char *str)
         else
             temp[i] = str[i] + key;
     }
+
+    for (i = 0; i < len; i++)
+    {
+        if(temp[i] >= 'a' && temp[i] <= 'z')
+            continue;
+        if (str[i] < 'A' || str[i] > 'Z')
+            temp[i] = str[i];
+        else if (str[i] + key > 'Z')
+        {
+            int r = str[i] + key - 1;
+            temp[i] = 'A' + r - 'Z';
+        }
+        else
+            temp[i] = str[i] + key;
+    }
+
     return temp;
 }
 
@@ -57,7 +73,7 @@ void encryptFile(char *fileName)
 
     for (i = 0; i < len; i++)
     {
-        if (fileName[i] == '.')
+        if (fileName[i] == '.' && (fileName[i + 1] != '/' && fileName[i + 1] != '.'))
         {
             size = len - i;
             index = i;
@@ -71,7 +87,7 @@ void encryptFile(char *fileName)
     memcpy(finish, &fileName[index], size);
     finish[size] = '\0';
     strcat(newFileName, finish);
-    printf("%s \n", newFileName);
+    
     otherfd = fopen(newFileName, "w");
     fwrite(encryptText, sizeof(char), strlen(encryptText), otherfd);
 
